@@ -16,6 +16,7 @@
 		tooltip: false, //boolean
 		tooltipOpts: {
 			content: "%s | X: %x | Y: %y.2", //%s -> series label, %x -> X value, %y -> Y value, %x.2 -> precision of X value, %p -> percent
+			contentFunction: undefined,
 			dateFormat: "%y-%0m-%0d",
 			shifts: {
 				x: 10,
@@ -82,7 +83,7 @@
 			$(placeholder).bind("plothover", function (event, pos, item) {
 				if (item) {					
 					var tipText;
-
+					
 					if(opts.xaxis.mode === "time" || opts.xaxes[0].mode === "time") {
 						tipText = stringFormat(to.content, item, timestampToDate);
 					}
@@ -90,6 +91,10 @@
 						tipText = stringFormat(to.content, item);						
 					}
 					
+					if (to.contentFunction != undefined) {
+						tipText = to.contentFunction(item.series.data[item.dataIndex][0], item.series.data[item.dataIndex][1]);
+					}
+
 					$tip.html( tipText ).css({left: tipPosition.x + to.shifts.x, top: tipPosition.y + to.shifts.y}).show();
 				}
 				else {
